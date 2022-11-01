@@ -1,11 +1,12 @@
 import React from 'react';
 import './app.scss';
-import WordByLetters from './components/wordByLetters/WordByLetters';
+import WordsList from './components/wordsList/WordsList';
 
 function App() {
+  const arr = ['friend', 'neighbour', 'surname', 'address', 'married']
   return (
     <div className="App">
-      <WordByLetters word='car' />
+      <WordsList words={arr} />
     </div>
   );
 }

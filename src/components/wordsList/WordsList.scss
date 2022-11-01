@@ -1,0 +1,8 @@
+.words-list {
+	&__container {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		row-gap: 30px;
+	}
+}

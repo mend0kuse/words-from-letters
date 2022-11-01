@@ -1,51 +1,64 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
+import { shuffleWord } from '../../utils/shuffleWord'
 import './WordByLetters.scss'
 
 interface wordByLettersProps {
     word: string
+    check: boolean
+}
+interface Cell {
+    status: string
+    inner: string | null
+
 }
 
+const WordByLetters: FC<wordByLettersProps> = ({ word, check }) => {
 
-const WordByLetters: FC<wordByLettersProps> = ({ word }) => {
-    function shuffle(array: string[]): string[] {
-        for (let i = array.length - 1; i > 0; i--) {
-            let j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]];
+    const [wordLetters, setWordLetters] = useState(shuffleWord(word.split('')))
+    const [cells, setCells] = useState<Array<Cell>>(Array(wordLetters.length).fill({ status: 'default', inner: null }))
+
+    useEffect(() => {
+        if (check) {
+            checkAnswer()
+        } else {
+            restart()
         }
-        return array
-    }
+    }, [check])
 
-    const [wordLetters, setWordLetters] = useState(shuffle(word.split('')))
-    const [cells, setCells] = useState<Array<string | null>>(word.split('').map(i => null))
-
-    const [end, setEnd] = useState(false)
-    const [perfect, setPerfect] = useState(true)
 
     const pickLetter = (letter: string, ind: number) => {
-        let lastCellIndex = cells.indexOf(null)
-        setCells(cells.map((c, index) => index === lastCellIndex ? letter : c))
-        let asd = wordLetters.filter((letter, index) => index !== ind)
-        setWordLetters(asd)
+        let firstEmptyCellIndex = cells.map(e => e.inner).indexOf(null)
+        setCells(cells.map((c, index) => index === firstEmptyCellIndex ? { inner: letter, status: 'default' } : c))
+        let filteredLetters = wordLetters.filter((letter, index) => index !== ind)
+        setWordLetters(filteredLetters)
     }
 
     const pickCell = (ind: number) => {
-        setPerfect(true)
-        setEnd(false)
+
         let asd = cells.find((el, index) => index === ind)
-        if (asd) {
-            setWordLetters([...wordLetters, asd])
+        if (asd?.inner) {
+            setWordLetters([...wordLetters, asd.inner])
         }
-        setCells(cells.map((c, index) => index === ind ? null : c))
+        setCells(cells.map((c, index) => index === ind ? { inner: null, status: 'default' } : c))
     }
 
     const checkAnswer = () => {
         let answer = word.split('')
-        cells.forEach((el, index) => {
-            if (el !== answer[index]) {
-                setPerfect(false)
+        setCells(cells.map((c, index) => {
+            if (c.inner !== answer[index]) {
+                c.status = 'error'
+                return c
             }
-        })
-        setEnd(true)
+            c.status = 'succes'
+            return c
+        }))
+    }
+
+    const restart = () => {
+        setWordLetters(shuffleWord(word.split('')))
+        setCells(cells.map((c, index) => {
+            return { inner: null, status: 'default' }
+        }))
     }
 
     return (
@@ -54,10 +67,8 @@ const WordByLetters: FC<wordByLettersProps> = ({ word }) => {
                 {wordLetters.map((letter, index) => <div onClick={() => pickLetter(letter, index)} className='letters-word__item' key={index}>{letter} </div>)}
             </div>
             <div className="word__cells cells-word">
-                {cells.map((cell, index) => <div key={index} onClick={() => pickCell(index)} className='cells-word__item'>{cell}</div>)}
+                {cells.map((cell, index) => <div key={index} onClick={() => pickCell(index)} className={cell.status + ' cells-word__item'}>{cell.inner}</div>)}
             </div>
-            <button onClick={checkAnswer}>проверить</button>
-            {end && <p>{perfect == true ? 'Всё правильно' : 'Есть ошибки'}</p>}
         </div>
     )
 }

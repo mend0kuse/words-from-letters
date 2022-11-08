@@ -1,3 +1,6 @@
+# Компонент для составления слов из представленных букв
+![App Screenshot](https://sun9-north.userapi.com/sun9-84/s/v1/ig2/-KHmc4NUzdqP8WZBaYa16__rtvHcZ6SpwXnzEFcoaH1SZaBydVQLe8QyllV8lGk-l6kxEMMrEBGSO6_Etj-fEZ1r.jpg?size=436x521&quality=96&type=album)
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
